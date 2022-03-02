@@ -11,6 +11,14 @@ body {
   padding: 0 20px 50px;
 }
 
+.auth-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
 .auth-wrapper h1 {
   margin-top: 80px;
   color: white;
@@ -19,7 +27,7 @@ body {
 }
 
 .auth-wrapper form {
-  max-width: 800px;
+  width: 375px;
   margin: 0 auto;
 }
 
@@ -49,9 +57,8 @@ body {
   line-height: 2;
   text-align: left;
   display: block;
-  margin-bottom: 13px;
-  margin-top: 20px;
-  color: white;
+  margin: 5px 0;
+  color: #333;
   font-size: 14px;
   font-weight: 200;
 }
@@ -59,7 +66,7 @@ body {
 .auth-wrapper input[type='submit'],
 .auth-wrapper .button {
   position: relative;
-  background: #ec5990;
+  background: #7a84eb;
   color: white;
   text-transform: uppercase;
   border: none;
@@ -117,8 +124,8 @@ body {
 
 .auth-wrapper input[type='submit']:hover,
 .auth-wrapper button[type='button']:hover {
-  background: #bf1650;
-  color: white;
+  background: #636ee6;
+  color: #333;
 }
 
 .auth-wrapper input[type='submit']:active {
