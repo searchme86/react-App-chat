@@ -1,16 +1,23 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { IoIosChatboxes } from 'react-icons/io';
 import Dropdown from 'react-bootstrap/Dropdown';
 import Image from 'react-bootstrap/Image';
 import { useSelector } from 'react-redux';
 import { app } from '../../../Firebase';
 import { getAuth } from 'firebase/auth';
+import mime from 'mime';
+
+import {
+  getStorage,
+  ref as strRef,
+  getDownloadURL,
+  uploadBytesResumable,
+} from 'firebase/storage';
 
 function UserPanel() {
-  // const user = useSelector((state) => state.user.currentUser);
   const { currentUser } = useSelector((state) => state.user);
   const {
-    currentUser: { photoURL, displayName },
+    currentUser: { photoURL, displayName, uid },
   } = useSelector((state) => state.user);
 
   const handleLogout = () => {
@@ -18,6 +25,34 @@ function UserPanel() {
     auth.signOut();
   };
 
+  const inputOpenImageRef = useRef();
+  const handleOpenImageRef = () => {
+    inputOpenImageRef.current.click();
+  };
+
+  const handleUploadImage = async (event) => {
+    const file = event.target.files[0];
+    const metadata = { contentType: mime.getType(file.name) };
+    const storage = getStorage();
+
+    try {
+      //스토리지에 파일 저장하기
+      let uploadTask = uploadBytesResumable(
+        strRef(storage, `user_image/${uid}`),
+        file,
+        metadata
+      );
+
+      //스토리지에 올린 파일을 확인하는 콘솔
+      console.log('uploadTask', uploadTask);
+    } catch (error) {
+      console.log('사진 파일을 올리는 중 발생한 에러입니다.', error);
+    }
+  };
+
+  // mime.getType;
+
+  // mime.getType('txt');
   return (
     <div>
       <h3 style={{ color: 'white`' }}>
@@ -29,16 +64,26 @@ function UserPanel() {
           style={{ width: '30px', height: '30px', marginTop: '3px' }}
           roundedCircle
         />
+        <input
+          type="file"
+          accept="image/jpeg, image/png, image/svg"
+          style={{ display: 'none' }}
+          ref={inputOpenImageRef}
+          onChange={handleUploadImage}
+        />
+
         <Dropdown>
           <Dropdown.Toggle
             style={{ background: 'transparent', border: '0px' }}
             id="dropdown-basic"
           >
-            {displayName}
+            {currentUser && displayName}
           </Dropdown.Toggle>
 
           <Dropdown.Menu>
-            <Dropdown.Item href="#/action-1">프로필 사진 변경</Dropdown.Item>
+            <Dropdown.Item onClick={handleOpenImageRef}>
+              프로필 사진 변경
+            </Dropdown.Item>
             <Dropdown.Item onClick={handleLogout}>로그아웃</Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
