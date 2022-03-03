@@ -3,7 +3,7 @@ import User from './user_reducer';
 // import chatRoom from './chatRoom_reducer'
 
 const rootReducer = combineReducers({
-  User: User,
+  user: User,
   //chatRoom
 });
 

@@ -11,6 +11,7 @@ import { setUser } from './redux/reducers/user_reducer';
 function App() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const isLoading = useSelector((state) => state.user.isLoading);
 
   useEffect(() => {
     const auth = getAuth(app);
@@ -23,20 +24,22 @@ function App() {
         navigate('/login');
       }
     });
-  }, [dispatch, navigate]);
+  }, []);
 
-  const { User } = useSelector((state) => state.User);
-  console.log('User', User);
-
-  return (
-    <>
-      <Routes>
-        <Route path="/" element={<ChatPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-      </Routes>
-    </>
-  );
+  console.log('isLoading', isLoading);
+  if (isLoading) {
+    return <div>...loading</div>;
+  } else {
+    return (
+      <>
+        <Routes>
+          <Route path="/" element={<ChatPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+        </Routes>
+      </>
+    );
+  }
 }
 
 export default App;
