@@ -1,5 +1,6 @@
 const SET_USER = 'set_user';
 const CLEAR_USER = 'clear_user';
+const SET_PHOTO_URL = 'set_phto_url';
 
 export function setUser(user) {
   return {
@@ -14,12 +15,17 @@ export function clearUser() {
   };
 }
 
+export function setPhotoURL(photoURL) {
+  return {
+    type: SET_PHOTO_URL,
+    photoURL: photoURL,
+  };
+}
+
 const initialUserState = {
   currentUser: ' ',
   isLoading: true,
 };
-
-console.log('initialState', initialUserState);
 
 function User(state = initialUserState, action) {
   switch (action.type) {
@@ -29,12 +35,21 @@ function User(state = initialUserState, action) {
         currentUser: action.user,
         isLoading: false,
       };
+
     case CLEAR_USER:
       return {
         ...state,
         currentUser: '',
         isLoading: false,
       };
+
+    case SET_PHOTO_URL:
+      return {
+        ...state,
+        currentUser: { ...state.currentUser, photoURL: action.photoURL },
+        isLoading: false,
+      };
+
     default:
       return state;
   }
