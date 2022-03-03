@@ -1,6 +1,13 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link } from 'react-router-dom';
+import { app } from '../../Firebase.js';
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  updateProfile,
+} from 'firebase/auth';
+// import { getDatabase, ref, child, set } from 'firebase/database';
 
 function RegisterPage() {
   const {
@@ -9,10 +16,41 @@ function RegisterPage() {
     watch,
     formState: { errors },
   } = useForm();
-  const onSubmit = (data) => console.log(data);
+  const [errorFromSubmit, setErrorFromSubmit] = useState('');
 
   const password = useRef();
   password.current = watch('password');
+
+  const onSubmit = async (data) => {
+    console.log('react-hook-form의 값', data);
+
+    try {
+      const auth = getAuth(app);
+      let createdUser = await createUserWithEmailAndPassword(
+        auth,
+        data.email,
+        data.password
+      );
+
+      console.log('생성된 createdUser', createdUser);
+
+      await updateProfile(auth.currentUser, {
+        display: data.name,
+        photoURL: ``,
+      });
+
+      // const database = getDatabase();
+      // set(child(ref(database, `users`), createdUser.user.uid), {
+      //   name: createdUser.user.displayName,
+      //   image: createdUser.user.photoURL,
+      // });
+    } catch (error) {
+      setErrorFromSubmit(error.message);
+      setTimeout(() => {
+        setErrorFromSubmit('');
+      }, 5000);
+    }
+  };
 
   return (
     <div className="auth-wrapper">
@@ -79,6 +117,7 @@ function RegisterPage() {
             <p>the password do not match</p>
           )}
 
+        {errorFromSubmit && <p>{errorFromSubmit}</p>}
         <input type="submit" />
       </form>
 
