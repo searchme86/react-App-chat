@@ -6,7 +6,7 @@ import RegisterPage from './components/RegisterPage/RegisterPage';
 import { app } from './Firebase';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { useDispatch, useSelector } from 'react-redux';
-import { setUser } from './redux/reducers/user_reducer';
+import { setUser, clearUser } from './redux/reducers/user_reducer';
 
 function App() {
   const navigate = useNavigate();
@@ -21,6 +21,7 @@ function App() {
         dispatch(setUser(user));
         navigate('/');
       } else {
+        dispatch(clearUser());
         navigate('/login');
       }
     });

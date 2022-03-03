@@ -3,6 +3,8 @@ import { IoIosChatboxes } from 'react-icons/io';
 import Dropdown from 'react-bootstrap/Dropdown';
 import Image from 'react-bootstrap/Image';
 import { useSelector } from 'react-redux';
+import { app } from '../../../Firebase';
+import { getAuth } from 'firebase/auth';
 
 function UserPanel() {
   // const user = useSelector((state) => state.user.currentUser);
@@ -10,6 +12,12 @@ function UserPanel() {
   const {
     currentUser: { photoURL, displayName },
   } = useSelector((state) => state.user);
+
+  const handleLogout = () => {
+    const auth = getAuth(app);
+    auth.signOut();
+  };
+
   return (
     <div>
       <h3 style={{ color: 'white`' }}>
@@ -31,7 +39,7 @@ function UserPanel() {
 
           <Dropdown.Menu>
             <Dropdown.Item href="#/action-1">프로필 사진 변경</Dropdown.Item>
-            <Dropdown.Item href="#/action-2">로그아웃</Dropdown.Item>
+            <Dropdown.Item onClick={handleLogout}>로그아웃</Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
       </div>

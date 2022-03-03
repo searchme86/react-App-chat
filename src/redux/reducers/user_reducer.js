@@ -1,9 +1,16 @@
 const SET_USER = 'set_user';
+const CLEAR_USER = 'clear_user';
 
 export function setUser(user) {
   return {
     type: SET_USER,
     user: user,
+  };
+}
+
+export function clearUser() {
+  return {
+    type: CLEAR_USER,
   };
 }
 
@@ -20,6 +27,12 @@ function User(state = initialUserState, action) {
       return {
         ...state,
         currentUser: action.user,
+        isLoading: false,
+      };
+    case CLEAR_USER:
+      return {
+        ...state,
+        currentUser: '',
         isLoading: false,
       };
     default:
