@@ -7,7 +7,8 @@ import {
   createUserWithEmailAndPassword,
   updateProfile,
 } from 'firebase/auth';
-// import { getDatabase, ref, child, set } from 'firebase/database';
+import md5 from 'md5';
+import { getDatabase, ref, child, set } from 'firebase/database';
 
 function RegisterPage() {
   const {
@@ -35,15 +36,17 @@ function RegisterPage() {
       console.log('생성된 createdUser', createdUser);
 
       await updateProfile(auth.currentUser, {
-        display: data.name,
-        photoURL: ``,
+        displayName: data.name,
+        photoURL: `http://gravatar.com/avatar/${md5(
+          createdUser.user.email
+        )}?d=identicon`,
       });
 
-      // const database = getDatabase();
-      // set(child(ref(database, `users`), createdUser.user.uid), {
-      //   name: createdUser.user.displayName,
-      //   image: createdUser.user.photoURL,
-      // });
+      const database = getDatabase();
+      set(child(ref(database, `users`), createdUser.user.uid), {
+        name: createdUser.user.displayName,
+        image: createdUser.user.photoURL,
+      });
     } catch (error) {
       setErrorFromSubmit(error.message);
       setTimeout(() => {
