@@ -32,6 +32,25 @@ export class ChatRooms extends Component {
     // notifications: [],
   };
 
+  componentDidMount() {
+    this.AddChatRoomsListeners();
+  }
+
+  AddChatRoomsListeners = () => {
+    let chatRoomsArray = [];
+
+    //실시간으로 데이터가 들어오는 지를 확인 할 수 있음
+    //chatRoomsRef는 chatRooms 테이블을 가리킨다.
+    //onChildAdded : 어떠한 데이터가 added되면은
+    //DataSnapshot: 들어온 데이터
+    onChildAdded(this.state.chatRoomsRef, (DataSnapshot) => {
+      chatRoomsArray.push(DataSnapshot.val());
+      console.log('chatRoomsArray', chatRoomsArray);
+      this.setState({ chatRooms: chatRoomsArray });
+      // this.addNotificationListener(DataSnapshot.key);
+    });
+  };
+
   handleClose = () => this.setState({ show: false });
   handleShow = () => this.setState({ show: true });
 
@@ -71,6 +90,20 @@ export class ChatRooms extends Component {
 
   isFormValid = (name, description) => name && description;
 
+  renderChatRooms = (chatRooms) =>
+    chatRooms.length > 0 &&
+    chatRooms.map((room) => (
+      <li
+        key={room.id}
+        style={{
+          backgroundColor:
+            room.id === this.state.activeChatRoomId && '#ffffff45',
+        }}
+      >
+        # {room.name}
+      </li>
+    ));
+
   render() {
     return (
       <div>
@@ -91,6 +124,10 @@ export class ChatRooms extends Component {
             style={{ position: 'absolute', right: 0, cursor: 'pointer' }}
           />
         </div>
+
+        <ul style={{ listStyleType: 'none', padding: 0 }}>
+          {this.renderChatRooms(this.state.chatRooms)}
+        </ul>
 
         <Modal show={this.state.show} onHide={this.handleClose}>
           <Modal.Header closeButton>
