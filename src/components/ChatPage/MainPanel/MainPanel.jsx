@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import MessageHeader from './MessageHeader';
 import MessageForm from './MessageForm';
-import Message from './Message';
+// import Message from './Message';
 
-export class MainPanel extends Component {
+class MainPanel extends Component {
   render() {
     return (
       <div style={{ padding: '2rem 2rem 0 2rem' }}>
