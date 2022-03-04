@@ -47,20 +47,6 @@ class MainPanel extends Component {
     });
   };
 
-  //렌더링 부분에서 메세지를 보여주기
-  renderMessages = (messages) => {
-    messages.length > 0 &&
-      messages.map((message) => {
-        return (
-          <Message
-            key={message.timestamp}
-            message={message}
-            user={this.props.user}
-          />
-        );
-      });
-  };
-
   componentDidMount() {
     //리덕스로 가져온 chatRoom
     const { chatRoom } = this.props;
@@ -94,15 +80,16 @@ class MainPanel extends Component {
             overflow: 'auto',
           }}
         >
-          {messages.map((message) => {
-            return (
-              <Message
-                key={message.timestamp}
-                message={message}
-                user={this.props.user}
-              />
-            );
-          })}
+          {messages.length > 0 &&
+            messages.map((message) => {
+              return (
+                <Message
+                  key={this.props.user.id}
+                  message={message}
+                  user={this.props.user}
+                />
+              );
+            })}
         </div>
         <MessageForm />
       </div>
