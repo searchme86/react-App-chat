@@ -4,7 +4,7 @@ import Dropdown from 'react-bootstrap/Dropdown';
 import Image from 'react-bootstrap/Image';
 import { useSelector } from 'react-redux';
 import { app } from '../../../Firebase';
-import { getAuth, updateProfile } from 'firebase/auth';
+import { getAuth } from 'firebase/auth';
 import { getDatabase, ref, update } from 'firebase/database';
 //mime : npm i -D
 import mime from 'mime';
