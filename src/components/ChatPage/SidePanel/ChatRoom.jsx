@@ -1,3 +1,4 @@
+import React, { Component } from 'react';
 import { FaRegSmileWink } from 'react-icons/fa';
 import { FaPlus } from 'react-icons/fa';
 import Modal from 'react-bootstrap/Modal';
@@ -15,8 +16,7 @@ import {
   off,
 } from 'firebase/database';
 import { connect } from 'react-redux';
-
-import React, { Component } from 'react';
+import { setCurrentChatRoom } from '../../../redux/reducers/chatRoom_reducer';
 
 export class ChatRooms extends Component {
   state = {
@@ -27,8 +27,8 @@ export class ChatRooms extends Component {
     chatRoomsRef: ref(getDatabase(), 'chatRooms'),
     // messagesRef: ref(getDatabase(), 'messages'),
     chatRooms: [],
-    // firstLoad: true,
-    // activeChatRoomId: '',
+    firstLoad: true,
+    activeChatRoomId: '',
     // notifications: [],
   };
 
@@ -36,6 +36,16 @@ export class ChatRooms extends Component {
     this.AddChatRoomsListeners();
   }
 
+  setFirstChatRoom = () => {
+    const firstChatRoom = this.state.chatRooms[0];
+    if (this.state.firstLoad && this.state.chatRooms.length > 0) {
+      this.props.dispatch(setCurrentChatRoom(firstChatRoom));
+      this.setState({ activeChatRoomId: firstChatRoom.id });
+    }
+    this.setState({ firstLoad: false });
+  };
+
+  //chatRoom을 데이터베이스에서 하나하나씩 가져오는 이벤트 리스너
   AddChatRoomsListeners = () => {
     let chatRoomsArray = [];
 
@@ -46,7 +56,11 @@ export class ChatRooms extends Component {
     onChildAdded(this.state.chatRoomsRef, (DataSnapshot) => {
       chatRoomsArray.push(DataSnapshot.val());
       console.log('chatRoomsArray', chatRoomsArray);
-      this.setState({ chatRooms: chatRoomsArray });
+      //state에 chatroom 정보를 넣은 후에 함수 setFirsttChatRoom 함수를 호출
+      //임의로 첫번째 방이 선택되도록 설정하는 로직
+      this.setState({ chatRooms: chatRoomsArray }, () =>
+        this.setFirstChatRoom()
+      );
       // this.addNotificationListener(DataSnapshot.key);
     });
   };
@@ -90,6 +104,12 @@ export class ChatRooms extends Component {
 
   isFormValid = (name, description) => name && description;
 
+  changeChatRoom = (room) => {
+    this.props.dispatch(setCurrentChatRoom(room));
+
+    this.setState({ activeChatRoomId: room.id });
+  };
+
   renderChatRooms = (chatRooms) =>
     chatRooms.length > 0 &&
     chatRooms.map((room) => (
@@ -99,6 +119,7 @@ export class ChatRooms extends Component {
           backgroundColor:
             room.id === this.state.activeChatRoomId && '#ffffff45',
         }}
+        onClick={() => this.changeChatRoom(room)}
       >
         # {room.name}
       </li>
