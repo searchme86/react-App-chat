@@ -4,17 +4,29 @@ import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 // import Badge from 'react-bootstrap/Badge';
+import {
+  getDatabase,
+  ref,
+  onChildAdded,
+  onValue,
+  push,
+  child,
+  update,
+  off,
+} from 'firebase/database';
+import { connect } from 'react-redux';
 
 import React, { Component } from 'react';
 
-export class ChatRoom extends Component {
+export class ChatRooms extends Component {
   state = {
     show: false,
     name: '',
     description: '',
-    // chatRoomsRef: ref(getDatabase(), 'chatRooms'),
+    //chatroom의 테이블에 접근(ref)
+    chatRoomsRef: ref(getDatabase(), 'chatRooms'),
     // messagesRef: ref(getDatabase(), 'messages'),
-    // chatRooms: [],
+    chatRooms: [],
     // firstLoad: true,
     // activeChatRoomId: '',
     // notifications: [],
@@ -22,6 +34,42 @@ export class ChatRoom extends Component {
 
   handleClose = () => this.setState({ show: false });
   handleShow = () => this.setState({ show: true });
+
+  handleSubmit = (e) => {
+    e.preventDefault();
+    const { name, description } = this.state;
+    if (this.isFormValid(name, description)) {
+      this.addChatRoom();
+    }
+  };
+
+  addChatRoom = async () => {
+    const key = push(this.state.chatRoomsRef).key;
+    const { name, description } = this.state;
+    const { user } = this.props;
+    const newChatRoom = {
+      id: key,
+      name: name,
+      description: description,
+      createdBy: {
+        name: user.displayName,
+        image: user.photoURL,
+      },
+    };
+    try {
+      //어떤 row
+      await update(child(this.state.chatRoomsRef, key), newChatRoom);
+      this.setState({
+        name: '',
+        desription: '',
+        show: false,
+      });
+    } catch (error) {
+      console.log('chatRoom 관련 작업 중에 발생한 에러는', error);
+    }
+  };
+
+  isFormValid = (name, description) => name && description;
 
   render() {
     return (
@@ -48,7 +96,6 @@ export class ChatRoom extends Component {
           <Modal.Header closeButton>
             <Modal.Title>Create a chat room</Modal.Title>
           </Modal.Header>
-
           <Modal.Body>
             <Form onSubmit={this.handleSubmit}>
               <Form.Group controlId="formBasicEmail">
@@ -76,8 +123,8 @@ export class ChatRoom extends Component {
             <Button variant="secondary" onClick={this.handleClose}>
               Close
             </Button>
-            <Button variant="primary" onClick={this.handleClose}>
-              Save Changes
+            <Button variant="primary" onClick={this.handleSubmit}>
+              Create
             </Button>
           </Modal.Footer>
         </Modal>
@@ -86,4 +133,10 @@ export class ChatRoom extends Component {
   }
 }
 
-export default ChatRoom;
+const mapStateToProps = (state) => {
+  return {
+    user: state.user.currentUser,
+  };
+};
+
+export default connect(mapStateToProps)(ChatRooms);
