@@ -36,6 +36,10 @@ export class ChatRooms extends Component {
     this.AddChatRoomsListeners();
   }
 
+  componentWillUnmount() {
+    off(this.state.chatRoomsRef);
+  }
+
   setFirstChatRoom = () => {
     const firstChatRoom = this.state.chatRooms[0];
     if (this.state.firstLoad && this.state.chatRooms.length > 0) {
@@ -46,6 +50,7 @@ export class ChatRooms extends Component {
   };
 
   //chatRoom을 데이터베이스에서 하나하나씩 가져오는 이벤트 리스너
+  //저장된 데이터를 보여주는 이벤트 리스너
   AddChatRoomsListeners = () => {
     let chatRoomsArray = [];
 
@@ -58,6 +63,7 @@ export class ChatRooms extends Component {
       console.log('chatRoomsArray', chatRoomsArray);
       //state에 chatroom 정보를 넣은 후에 함수 setFirsttChatRoom 함수를 호출
       //임의로 첫번째 방이 선택되도록 설정하는 로직
+      //chatroom이 설정되면 함수 setFirstchatRoom이 실행된다.
       this.setState({ chatRooms: chatRoomsArray }, () =>
         this.setFirstChatRoom()
       );
