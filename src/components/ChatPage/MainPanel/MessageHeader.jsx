@@ -69,30 +69,30 @@ function MessageHeader() {
         </div>
         <Row>
           <Col>
-            <Accordion>
+            {/* <Accordion>
               <Card>
                 <Card.Header></Card.Header>
                 <Accordion.Collapse>
-                  <Card.Body>Hello! I'm the body</Card.Body>
+                  <Card.Body></Card.Body>
                 </Accordion.Collapse>
               </Card>
               <Card>
                 <Card.Header></Card.Header>
                 <Accordion.Collapse>
-                  <Card.Body>Hello! I'm another body</Card.Body>
+                  <Card.Body></Card.Body>
                 </Accordion.Collapse>
               </Card>
-            </Accordion>
+            </Accordion> */}
           </Col>
           <Col>
-            <Accordion>
+            {/* <Accordion>
               <Card>
                 <Card.Header></Card.Header>
                 <Accordion.Collapse>
-                  <Card.Body>Hello! I'm another body</Card.Body>
+                  <Card.Body></Card.Body>
                 </Accordion.Collapse>
               </Card>
-            </Accordion>
+            </Accordion> */}
           </Col>
         </Row>
       </Container>
