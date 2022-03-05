@@ -18,7 +18,7 @@ function MessageForm() {
   const [content, setContent] = useState('');
   const [errors, setErrors] = useState([]);
   const [loading, setLoading] = useState(false);
-
+  const [percentage, setPercentage] = useState(0);
   //메세지 테이블 정의
   const messagesRef = ref(getDatabase(), 'messages');
 
@@ -93,7 +93,7 @@ function MessageForm() {
 
   //input의 onchange할때 호출되는 함수
   //이미지를 고르고 올리는 함수
-  const handleUploadImage = async (event) => {
+  const handleUploadImage = (event) => {
     const file = event.target.files[0];
     console.log('file', file);
 
@@ -114,45 +114,55 @@ function MessageForm() {
       //파베 storaged에 파일을 업로드 한다,
       //storage에 message 폴더 아래, public에 파일이 저장된다, 핵심(uploadBytesResumable)
       const uploadTask = uploadBytesResumable(storageRef, file, metadata);
-      //파일을 업로드 할때, 업로드 되는 상태에 따라, 퍼센테이지 바가 움직이도록 설정을 함
 
-      // uploadTask.on(
-      // 'state_changed',
-      // (snapshot) => {
-      //   const progress =
-      //     (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-      //   console.log('Upload is ' + progress + '% done');
-      //   switch (snapshot.state) {
-      //     case 'paused':
-      //       console.log('Upload is paused');
-      //       break;
-      //     case 'running':
-      //       console.log('Upload is running');
-      //       break;
-      //   }
-      // },
-      // (error) => {
-      //   switch (error.code) {
-      //     case 'storage/unauthorized':
-      //       // User doesn't have permission to access the object
-      //       break;
-      //     case 'storage/canceled':
-      //       // User canceled the upload
-      //       break;
-      //     case 'storage/unknown':
-      //       break;
-      //   }
-      // },
-      // () => {
-      //   getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-      //     set(
-      //       push(child(messagesRef, chatRoom.id)),
-      //       createMessage(downloadURL)
-      //     );
-      //     setLoading(false);
-      //   });
-      // }
-      // );
+      //파일을 업로드 할때, 업로드 되는 상태에 따라, 퍼센테이지 바가 움직이도록 설정을 함
+      //파일 저장 퍼센테지 기능
+      // 리스너는 state~ 임, 이 리스너가 작동해서  파이어베이스에서  snapshot 정보를 준다,
+      //bytes~얼마나 정보가 전달이 되었는지 알려준다,
+      uploadTask.on(
+        'state_changed',
+        (snapshot) => {
+          const progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          setPercentage(Math.round(progress));
+          console.log('percentage', percentage);
+          console.log('Upload is ' + progress + '% done');
+          switch (snapshot.state) {
+            case 'paused':
+              console.log('Upload is paused');
+              break;
+            case 'running':
+              console.log('Upload is running');
+              break;
+            default:
+              console.log('Upload is not working');
+          }
+        },
+        (error) => {
+          switch (error.code) {
+            case 'storage/unauthorized':
+              // User doesn't have permission to access the object
+              break;
+            case 'storage/canceled':
+              // User canceled the upload
+              break;
+            case 'storage/unknown':
+              break;
+            default:
+              // eslint-disable-next-line no-unused-expressions
+              'storage/retry-limit-exceeded';
+          }
+        }
+        // () => {
+        //   getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+        //     set(
+        //       push(child(messagesRef, chatRoom.id)),
+        //       createMessage(downloadURL)
+        //     );
+        //     setLoading(false);
+        //   });
+        // }
+      );
     } catch (error) {
       console.log('이미지를 업로드 중에 에러가 발생했습니다.', error);
     }
@@ -171,15 +181,21 @@ function MessageForm() {
           />
         </Form.Group>
       </Form>
+      {/* <ProgressBar
+        variant="warning"
+        label={`${pregress}%`}
+        now={progress}
+      /> */}
+      {console.log('percentage', percentage)}
+      {console.log(percentage === 0 || percentage === 100)}
 
-      <ProgressBar variant="warning" label={`${60}%`} now={60} />
-      {/* {!(percentage === 0 || percentage === 100) && (
+      {!(percentage === 0 || percentage === 100) && (
         <ProgressBar
           variant="warning"
           label={`${percentage}%`}
           now={percentage}
         />
-      )} */}
+      )}
 
       <div>
         {errors.map((errorMsg) => (
@@ -188,7 +204,6 @@ function MessageForm() {
           </p>
         ))}
       </div>
-
       <Row>
         <Col>
           <button
@@ -211,7 +226,6 @@ function MessageForm() {
           </button>
         </Col>
       </Row>
-
       <input
         type="file"
         accept="image/jpeg, image/png"
