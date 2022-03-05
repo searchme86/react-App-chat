@@ -91,21 +91,6 @@ class MainPanel extends Component {
     );
   };
 
-  // renderMessages = (messages) => {
-  //   messages.length > 0 &&
-  //     messages.map((message) => {
-  //       return (
-  //         <ul style={{ paddingLeft: '-30px' }} key={this.props.user.id}>
-  //           <Message
-  //             key={this.props.user.id}
-  //             message={message}
-  //             user={this.props.user}
-  //           />
-  //         </ul>
-  //       );
-  //     });
-  // };
-
   render() {
     const {
       messages,
