@@ -17,8 +17,8 @@ function Message({ message, user }) {
       return message.user.id === user.uid;
     }
   };
-  console.log('Message 컴포넌트의 message', message);
-  console.log('Message 컴포넌트의 user', user);
+  // console.log('Message 컴포넌트의 message', message);
+  // console.log('Message 컴포넌트의 user', user);
 
   return (
     <li style={{ listStyleType: 'none' }}>
