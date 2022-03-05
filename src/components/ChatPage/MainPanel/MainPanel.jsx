@@ -83,11 +83,13 @@ class MainPanel extends Component {
           {messages.length > 0 &&
             messages.map((message) => {
               return (
-                <Message
-                  key={this.props.user.id}
-                  message={message}
-                  user={this.props.user}
-                />
+                <ul style={{ paddingLeft: '-30px' }} key={this.props.user.id}>
+                  <Message
+                    key={this.props.user.id}
+                    message={message}
+                    user={this.props.user}
+                  />
+                </ul>
               );
             })}
         </div>
