@@ -22,7 +22,7 @@ import { useSelector } from 'react-redux';
 //   update,
 // } from 'firebase/database';
 
-function MessageHeader() {
+function MessageHeader({ handleSearchChange }) {
   return (
     <div
       style={{
@@ -50,6 +50,7 @@ function MessageHeader() {
                 </InputGroup.Text>
               </InputGroup>
               <FormControl
+                onChange={handleSearchChange}
                 placeholder="Search Messages"
                 aria-label="Search"
                 aria-describedby="basic-addon1"
