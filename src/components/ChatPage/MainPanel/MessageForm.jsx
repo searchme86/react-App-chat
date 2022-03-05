@@ -11,7 +11,7 @@ import {
   getStorage,
   ref as strRef,
   uploadBytesResumable,
-  // getDownloadURL,
+  getDownloadURL,
 } from 'firebase/storage';
 
 function MessageForm() {
@@ -152,16 +152,29 @@ function MessageForm() {
               // eslint-disable-next-line no-unused-expressions
               'storage/retry-limit-exceeded';
           }
+        },
+        //저장한 storage 이후에, storage에 저장된 정보를 메세지 테이블(messageRef)에 저장한다.
+        //지금까지 이미지를 storage에 저장했는데, 이 저장된 이미지의 정보를 메세지 테이블에 저장한다
+        //이전에 메세지 테이블(messageRef)에 텍스트 정보가 저장됐는데, 이미지가 저장되면 content 객체안에 이미지 url이 들어간다.
+        //createMessage 메세지 안에 객체에 정보가 들어간다
+        //우리가 storage에 저장한 이미지를 보려면 url이 필요하다
+        //url을 갖기 위해서
+        //저장이 모두 된 후에 파일 메세지를 데이터 베이스에 저장함
+        //저장된 파일을 다운로드 받을 수 있는 url을 가져오는 방법 = (uploadTask.snapshot.ref)
+        () => {
+          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+            console.log('downloadURL', downloadURL);
+            set(
+              //messageRef는 메세지 테이블임
+              //메세지 테이블에 저장하는 로직
+              //chatRoom.id는 첫번째방, 두번째방,세번째 방의 id를 의미함
+              push(child(messagesRef, chatRoom.id)),
+              // 메세지 테이블에 들어가기 위한 객체를 만들어주는 createMessage 함수
+              createMessage(downloadURL)
+            );
+            setLoading(false);
+          });
         }
-        // () => {
-        //   getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-        //     set(
-        //       push(child(messagesRef, chatRoom.id)),
-        //       createMessage(downloadURL)
-        //     );
-        //     setLoading(false);
-        //   });
-        // }
       );
     } catch (error) {
       console.log('이미지를 업로드 중에 에러가 발생했습니다.', error);
