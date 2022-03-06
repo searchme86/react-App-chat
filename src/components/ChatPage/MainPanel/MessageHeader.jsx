@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -13,27 +13,55 @@ import { MdFavorite, MdFavoriteBorder } from 'react-icons/md';
 import { AiOutlineSearch } from 'react-icons/ai';
 import { useSelector } from 'react-redux';
 // import { Media } from 'react-bootstrap';
-// import {
-//   getDatabase,
-//   ref,
-//   onValue,
-//   remove,
-//   child,
-//   update,
-// } from 'firebase/database';
+import {
+  getDatabase,
+  ref,
+  onValue,
+  remove,
+  child,
+  update,
+} from 'firebase/database';
 
 function MessageHeader({ handleSearchChange }) {
   const chatRoom = useSelector((state) => state.chatRoom.currentChatRoom);
   const isPrivateChatRoom = useSelector((state) => state.chatRoom.isPrivate);
-  // const [isFavorited, setIsFavorited] = useState(false);
-  // const usersRef = ref(getDatabase(), 'users');
-  // const user = useSelector((state) => state.user.currentUser);
+  const [isFavorited, setIsFavorited] = useState(false);
+  //유저테이블의 정보
+  const usersRef = ref(getDatabase(), 'users');
+  //현재 로그인한 유저, 유저정보
+  const user = useSelector((state) => state.user.currentUser);
   // const userPosts = useSelector((state) => state.chatRoom.userPosts);
   // useEffect(() => {
   //   if (chatRoom && user) {
   //     addFavoriteListener(chatRoom.id, user.uid);
   //   }
   // }, []);
+
+  const handleFavorite = () => {
+    if (isFavorited) {
+      setIsFavorited((prev) => !prev);
+      //클릭되어 있으면 userRef에서 삭제한다.
+      //이미 클릭이 되어 있으면
+      remove(child(usersRef, `${user.uid}/favorited/${chatRoom.id}`));
+    } else {
+      setIsFavorited((prev) => !prev);
+      //클릭이 되지 않았을 때,
+      //유저 collection에 추가한다.
+      //favorite한 이름으로 묶인다
+      update(child(usersRef, `${user.uid}/favorited`), {
+        //그 아래 favorite한 방의 정보가 저장된다.
+        //이런 정보가 userRef에 저장이 된다.
+        [chatRoom.id]: {
+          name: chatRoom.name,
+          description: chatRoom.description,
+          createdBy: {
+            name: chatRoom.createdBy.name,
+            image: chatRoom.createdBy.image,
+          },
+        },
+      });
+    }
+  };
 
   return (
     <div
@@ -58,7 +86,7 @@ function MessageHeader({ handleSearchChange }) {
 
               {chatRoom && chatRoom.name}
 
-              {/* {!isPrivateChatRoom && (
+              {!isPrivateChatRoom && (
                 <span style={{ cursor: 'pointer' }} onClick={handleFavorite}>
                   {isFavorited ? (
                     <MdFavorite style={{ marginBottom: '10px' }} />
@@ -66,7 +94,7 @@ function MessageHeader({ handleSearchChange }) {
                     <MdFavoriteBorder style={{ marginBottom: '10px' }} />
                   )}
                 </span>
-              )} */}
+              )}
             </h2>
           </Col>
 
