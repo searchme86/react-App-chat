@@ -23,6 +23,18 @@ import { useSelector } from 'react-redux';
 // } from 'firebase/database';
 
 function MessageHeader({ handleSearchChange }) {
+  const chatRoom = useSelector((state) => state.chatRoom.currentChatRoom);
+  const isPrivateChatRoom = useSelector((state) => state.chatRoom.isPrivate);
+  // const [isFavorited, setIsFavorited] = useState(false);
+  // const usersRef = ref(getDatabase(), 'users');
+  // const user = useSelector((state) => state.user.currentUser);
+  // const userPosts = useSelector((state) => state.chatRoom.userPosts);
+  // useEffect(() => {
+  //   if (chatRoom && user) {
+  //     addFavoriteListener(chatRoom.id, user.uid);
+  //   }
+  // }, []);
+
   return (
     <div
       style={{
@@ -38,7 +50,23 @@ function MessageHeader({ handleSearchChange }) {
         <Row>
           <Col>
             <h2>
-              <FaLockOpen style={{ marginBottom: '10px' }} />
+              {isPrivateChatRoom ? (
+                <FaLock style={{ marginBottom: '10px' }} />
+              ) : (
+                <FaLockOpen style={{ marginBottom: '10px' }} />
+              )}
+
+              {chatRoom && chatRoom.name}
+
+              {/* {!isPrivateChatRoom && (
+                <span style={{ cursor: 'pointer' }} onClick={handleFavorite}>
+                  {isFavorited ? (
+                    <MdFavorite style={{ marginBottom: '10px' }} />
+                  ) : (
+                    <MdFavoriteBorder style={{ marginBottom: '10px' }} />
+                  )}
+                </span>
+              )} */}
             </h2>
           </Col>
 

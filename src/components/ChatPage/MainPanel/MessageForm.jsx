@@ -25,6 +25,7 @@ function MessageForm() {
   //리덕스의 정보를 가져옴
   const chatRoom = useSelector((state) => state.chatRoom.currentChatRoom);
   const user = useSelector((state) => state.user.currentUser);
+  const isPrivateChatRoom = useSelector((state) => state.chatRoom.isPrivate);
 
   const createMessage = (fileUrl = null) => {
     const message = {
@@ -84,11 +85,11 @@ function MessageForm() {
   };
 
   const getPath = () => {
-    // if (isPrivateChatRoom) {
-    //   return `/message/private/${chatRoom.id}`;
-    // } else {
-    return `/message/public`;
-    // }
+    if (isPrivateChatRoom) {
+      return `/message/private/${chatRoom.id}`;
+    } else {
+      return `/message/public`;
+    }
   };
 
   //input의 onchange할때 호출되는 함수

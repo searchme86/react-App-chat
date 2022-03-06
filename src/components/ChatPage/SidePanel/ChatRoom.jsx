@@ -16,7 +16,10 @@ import {
   off,
 } from 'firebase/database';
 import { connect } from 'react-redux';
-import { setCurrentChatRoom } from '../../../redux/reducers/chatRoom_reducer';
+import {
+  setCurrentChatRoom,
+  setPrivateChatRoom,
+} from '../../../redux/reducers/chatRoom_reducer';
 
 export class ChatRooms extends Component {
   state = {
@@ -112,7 +115,7 @@ export class ChatRooms extends Component {
 
   changeChatRoom = (room) => {
     this.props.dispatch(setCurrentChatRoom(room));
-
+    this.props.dispatch(setPrivateChatRoom(false));
     this.setState({ activeChatRoomId: room.id });
   };
 
