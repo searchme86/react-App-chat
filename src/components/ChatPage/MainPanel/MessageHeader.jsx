@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -31,11 +31,29 @@ function MessageHeader({ handleSearchChange }) {
   //현재 로그인한 유저, 유저정보
   const user = useSelector((state) => state.user.currentUser);
   // const userPosts = useSelector((state) => state.chatRoom.userPosts);
-  // useEffect(() => {
-  //   if (chatRoom && user) {
-  //     addFavoriteListener(chatRoom.id, user.uid);
-  //   }
-  // }, []);
+  useEffect(() => {
+    if (chatRoom && user) {
+      //브라우저를 리프레쉬해도 좋아요 한 것을 계속 유지하려고 useEffect를 하는데,
+      addFavoriteListener(chatRoom.id, user.uid);
+    }
+  }, []);
+
+  //파베는 데이터가 있으면 이벤트 리스너를 실행하는 방식이라,
+  //페이지 새로 고침에도 좋아요 표시 남아있도록 해주기
+  //addFavoriteListener라는 이벤트리스너를 정의함
+  const addFavoriteListener = (chatRoomId, userId) => {
+    //useRef, users의 테이블
+    onValue(child(usersRef, `${userId}/favorited`), (data) => {
+      //좋아요한 방이 있다면,
+      if (data.val() !== null) {
+        console.log('data.val()', data.val());
+        const chatRoomIds = Object.keys(data.val());
+        console.log('chatRoomIds', chatRoomIds);
+        const isAlreadyFavorited = chatRoomIds.includes(chatRoomId);
+        setIsFavorited(isAlreadyFavorited);
+      }
+    });
+  };
 
   const handleFavorite = () => {
     if (isFavorited) {
