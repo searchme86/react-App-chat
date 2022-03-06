@@ -96,13 +96,13 @@ function MessageForm() {
   //이미지를 고르고 올리는 함수
   const handleUploadImage = (event) => {
     const file = event.target.files[0];
-    console.log('file', file);
+    // console.log('file', file);
 
     //파일을 어디에 저장할지, 어떤 이름으로 저장할지, message라는 폴더 안에 그아래 public에 넣을 것임을 설정함
     //프로파일 저장한 방법과 동일함
     const storage = getStorage();
     const filePath = `${getPath()}/${file.name}`;
-    console.log('filePath', filePath);
+    // console.log('filePath', filePath);
     const metadata = { contentType: mime.getType(file.name) };
     setLoading(true);
 
@@ -110,7 +110,7 @@ function MessageForm() {
     try {
       //스토리지에 파일을 저장한다
       const storageRef = strRef(storage, filePath);
-      console.log(storageRef);
+      // console.log(storageRef);
       //스토리지에 파일을 업로드 한다,
       //파베 storaged에 파일을 업로드 한다,
       //storage에 message 폴더 아래, public에 파일이 저장된다, 핵심(uploadBytesResumable)
@@ -126,7 +126,7 @@ function MessageForm() {
           const progress =
             (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
           setPercentage(Math.round(progress));
-          console.log('percentage', percentage);
+          // console.log('percentage', percentage);
           console.log('Upload is ' + progress + '% done');
           switch (snapshot.state) {
             case 'paused':
@@ -164,7 +164,7 @@ function MessageForm() {
         //저장된 파일을 다운로드 받을 수 있는 url을 가져오는 방법 = (uploadTask.snapshot.ref)
         () => {
           getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-            console.log('downloadURL', downloadURL);
+            // console.log('downloadURL', downloadURL);
             set(
               //messageRef는 메세지 테이블임
               //메세지 테이블에 저장하는 로직
@@ -200,8 +200,8 @@ function MessageForm() {
         label={`${pregress}%`}
         now={progress}
       /> */}
-      {console.log('percentage', percentage)}
-      {console.log(percentage === 0 || percentage === 100)}
+      {/* {console.log('percentage', percentage)} */}
+      {/* {console.log(percentage === 0 || percentage === 100)} */}
 
       {!(percentage === 0 || percentage === 100) && (
         <ProgressBar
