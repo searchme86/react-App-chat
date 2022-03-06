@@ -43,7 +43,7 @@ class DirectMessages extends Component {
       //나의 이름은 빼고 가입된 유저 정보만 보이도록 해야한다.
       if (currentUserId !== DataSnapshot.key) {
         let user = DataSnapshot.val();
-        console.log('datasnapshotval', user);
+        // console.log('datasnapshotval', user);
         user['uid'] = DataSnapshot.key;
         user['status'] = 'offline';
         usersArray.push(user);
