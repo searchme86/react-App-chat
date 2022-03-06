@@ -1,9 +1,14 @@
 import React, { Component } from 'react';
 import { FaRegSmile } from 'react-icons/fa';
 import { connect } from 'react-redux';
+
+import {
+  setCurrentChatRoom,
+  setPrivateChatRoom,
+} from '../../../redux/reducers/chatRoom_reducer';
 // import {
 //   setCurrentChatRoom,
-//   setPrivateChatRoom,
+//   // setPrivateChatRoom,
 // } from '../../../redux/actions/chatRoom_action';
 import { getDatabase, ref, onChildAdded } from 'firebase/database';
 
@@ -69,9 +74,13 @@ class DirectMessages extends Component {
       name: user.name,
     };
 
-    // this.props.dispatch(setCurrentChatRoom(chatRoomData));
-    // this.props.dispatch(setPrivateChatRoom(true));
-    // this.setActiveChatRoom(user.uid);
+    this.props.dispatch(setCurrentChatRoom(chatRoomData));
+    this.props.dispatch(setPrivateChatRoom(true));
+    this.setActiveChatRoom(user.uid);
+  };
+
+  setActiveChatRoom = (userId) => {
+    this.setState({ activeChatRoom: userId });
   };
 
   render() {
@@ -80,8 +89,7 @@ class DirectMessages extends Component {
       <div>
         <span style={{ display: 'flex', alignItems: 'center' }}>
           <FaRegSmile style={{ marginRight: 3 }} />
-          {/* DIRECT MESSAGES({users.length}) */}
-          DIRECT MESSAGES 1
+          DIRECT MESSAGES({users.length})
         </span>
 
         <ul style={{ listStyleType: 'none', padding: 0 }}>
