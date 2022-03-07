@@ -44,7 +44,7 @@ export class ChatRooms extends Component {
     //[notification 마지막 처리 ]
     //처음에 AddChatRoomsListeners가 마운트 되면서 시작이 됐고,
     //첫번째 방, 두번째 방을 누를때 모든 방이 함수 AddChatRoomsListeners을 사용하면서
-    //chatRoomRef를 사용했기 때문에, 컴포넌트가 없어질 때, 이 chatRoom을 해제해야한다.
+    //chatRoomRef를 사용했기 때문에, 컴포넌트가 없어질 때, 이 chatRoomRef을 해제해야한다.
     //모든 정보가 chatroom에 연결되어 있는 상태다
     off(this.state.chatRoomsRef);
   }

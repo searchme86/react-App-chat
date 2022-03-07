@@ -1,5 +1,6 @@
 const SET_CURRENT_CHAT_ROOM = 'set_current_chat_room';
 const SET_PRIVATE_CHAT_ROOM = 'set_private_chat_room';
+const SET_USER_POSTS = 'set_user_posts';
 
 export function setCurrentChatRoom(currentChatRoom) {
   return {
@@ -15,9 +16,17 @@ export function setPrivateChatRoom(isPrivate) {
   };
 }
 
+export function setUserPosts(userPosts) {
+  return {
+    type: SET_USER_POSTS,
+    userPosts: userPosts,
+  };
+}
+
 const initialChatRoomState = {
   currentChatRoom: null,
   isPrivate: false,
+  userPosts: null,
 };
 
 function User(state = initialChatRoomState, action) {
@@ -31,6 +40,11 @@ function User(state = initialChatRoomState, action) {
       return {
         ...state,
         isPrivate: action.isPrivate,
+      };
+    case SET_USER_POSTS:
+      return {
+        ...state,
+        userPosts: action.userPosts,
       };
     default:
       return state;

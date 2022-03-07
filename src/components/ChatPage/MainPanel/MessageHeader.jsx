@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -13,27 +13,96 @@ import { MdFavorite, MdFavoriteBorder } from 'react-icons/md';
 import { AiOutlineSearch } from 'react-icons/ai';
 import { useSelector } from 'react-redux';
 // import { Media } from 'react-bootstrap';
-// import {
-//   getDatabase,
-//   ref,
-//   onValue,
-//   remove,
-//   child,
-//   update,
-// } from 'firebase/database';
+import {
+  getDatabase,
+  ref,
+  onValue,
+  remove,
+  child,
+  update,
+} from 'firebase/database';
 
 function MessageHeader({ handleSearchChange }) {
   const chatRoom = useSelector((state) => state.chatRoom.currentChatRoom);
   const isPrivateChatRoom = useSelector((state) => state.chatRoom.isPrivate);
-  // const [isFavorited, setIsFavorited] = useState(false);
-  // const usersRef = ref(getDatabase(), 'users');
-  // const user = useSelector((state) => state.user.currentUser);
-  // const userPosts = useSelector((state) => state.chatRoom.userPosts);
-  // useEffect(() => {
-  //   if (chatRoom && user) {
-  //     addFavoriteListener(chatRoom.id, user.uid);
-  //   }
-  // }, []);
+  const [isFavorited, setIsFavorited] = useState(false);
+  //유저테이블의 정보
+  const usersRef = ref(getDatabase(), 'users');
+  //현재 로그인한 유저, 유저정보
+  const user = useSelector((state) => state.user.currentUser);
+  const userPosts = useSelector((state) => state.chatRoom.userPosts);
+
+  useEffect(() => {
+    if (chatRoom && user) {
+      //브라우저를 리프레쉬해도 좋아요 한 것을 계속 유지하려고 useEffect를 하는데,
+      addFavoriteListener(chatRoom.id, user.uid);
+    }
+  }, []);
+
+  //파베는 데이터가 있으면 이벤트 리스너를 실행하는 방식이라,
+  //페이지 새로 고침에도 좋아요 표시 남아있도록 해주기
+  //addFavoriteListener라는 이벤트리스너를 정의함
+  const addFavoriteListener = (chatRoomId, userId) => {
+    //useRef, users의 테이블
+    onValue(child(usersRef, `${userId}/favorited`), (data) => {
+      //좋아요한 방이 있다면,
+      if (data.val() !== null) {
+        console.log('data.val()', data.val());
+        const chatRoomIds = Object.keys(data.val());
+        console.log('chatRoomIds', chatRoomIds);
+        const isAlreadyFavorited = chatRoomIds.includes(chatRoomId);
+        setIsFavorited(isAlreadyFavorited);
+      }
+    });
+  };
+
+  const handleFavorite = () => {
+    if (isFavorited) {
+      setIsFavorited((prev) => !prev);
+      //클릭되어 있으면 userRef에서 삭제한다.
+      //이미 클릭이 되어 있으면
+      remove(child(usersRef, `${user.uid}/favorited/${chatRoom.id}`));
+    } else {
+      setIsFavorited((prev) => !prev);
+      //클릭이 되지 않았을 때,
+      //유저 collection에 추가한다.
+      //favorite한 이름으로 묶인다
+      update(child(usersRef, `${user.uid}/favorited`), {
+        //그 아래 favorite한 방의 정보가 저장된다.
+        //이런 정보가 userRef에 저장이 된다.
+        [chatRoom.id]: {
+          name: chatRoom.name,
+          description: chatRoom.description,
+          createdBy: {
+            name: chatRoom.createdBy.name,
+            image: chatRoom.createdBy.image,
+          },
+        },
+      });
+    }
+  };
+
+  //MainPanel의 userPostsCount에 다음 로직이 전달되는 함수
+  //count가 큰거부터 위에서 아래로 나오도록 설정한다.
+  const renderUserPosts = (userPosts) =>
+    Object.entries(userPosts)
+      .sort((a, b) => b[1].count - a[1].count)
+      .map(([key, val], i) => (
+        <div key={i} style={{ display: 'flex' }}>
+          <img
+            style={{ borderRadius: 25 }}
+            width={48}
+            height={48}
+            className="mr-3"
+            src={val.image}
+            alt={val.name}
+          />
+          <div>
+            <h6>{key}</h6>
+            <p>{val.count} 개</p>
+          </div>
+        </div>
+      ));
 
   return (
     <div
@@ -58,7 +127,7 @@ function MessageHeader({ handleSearchChange }) {
 
               {chatRoom && chatRoom.name}
 
-              {/* {!isPrivateChatRoom && (
+              {!isPrivateChatRoom && (
                 <span style={{ cursor: 'pointer' }} onClick={handleFavorite}>
                   {isFavorited ? (
                     <MdFavorite style={{ marginBottom: '10px' }} />
@@ -66,7 +135,7 @@ function MessageHeader({ handleSearchChange }) {
                     <MdFavoriteBorder style={{ marginBottom: '10px' }} />
                   )}
                 </span>
-              )} */}
+              )}
             </h2>
           </Col>
 
@@ -86,42 +155,44 @@ function MessageHeader({ handleSearchChange }) {
             </InputGroup>
           </Col>
         </Row>
+
         <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
           <p>
             <Image
-            // src={chatRoom && chatRoom.createdBy.image}
-            // roundedCircle
-            // style={{ width: '30px', height: '30px' }}
+              src={chatRoom && chatRoom.createdBy.image}
+              roundedCircle
+              style={{ width: '30px', height: '30px' }}
             />{' '}
-            {/* {chatRoom && chatRoom.createdBy.name} */}
+            {chatRoom && chatRoom.createdBy.name}
           </p>
         </div>
+
         <Row>
           <Col>
-            {/* <Accordion>
+            <Accordion>
               <Card>
-                <Card.Header></Card.Header>
+                <Card.Header style={{ padding: '0 1rem' }}>
+                  <Accordion>Description</Accordion>
+                </Card.Header>
                 <Accordion.Collapse>
-                  <Card.Body></Card.Body>
+                  <Card.Body>{chatRoom && chatRoom.description}</Card.Body>
                 </Accordion.Collapse>
               </Card>
-              <Card>
-                <Card.Header></Card.Header>
-                <Accordion.Collapse>
-                  <Card.Body></Card.Body>
-                </Accordion.Collapse>
-              </Card>
-            </Accordion> */}
+            </Accordion>
           </Col>
           <Col>
-            {/* <Accordion>
+            <Accordion>
               <Card>
-                <Card.Header></Card.Header>
+                <Card.Header style={{ padding: '0 1rem' }}>
+                  <Accordion>Posts Count</Accordion>
+                </Card.Header>
                 <Accordion.Collapse>
-                  <Card.Body></Card.Body>
+                  <Card.Body>
+                    {userPosts && renderUserPosts(userPosts)}
+                  </Card.Body>
                 </Accordion.Collapse>
               </Card>
-            </Accordion> */}
+            </Accordion>
           </Col>
         </Row>
       </Container>
