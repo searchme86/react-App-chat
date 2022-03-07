@@ -12,7 +12,8 @@ import {
 } from 'firebase/database';
 import { connect } from 'react-redux';
 import MessageSearch from './MessageSearch';
-// import { setUserPosts } from '../../../redux/actions/chatRoom_action';
+
+import { setUserPosts } from '../../../redux/reducers/chatRoom_reducer';
 // import Skeleton from '../../../commons/components/Skeleton';
 
 class MainPanel extends Component {
@@ -31,6 +32,7 @@ class MainPanel extends Component {
 
   //메세지를 실시간으로 가져오기
   //파이어베이스는 데이터가 add되면 이벤트 리스너가 실행되는 것으로 알림
+  //[chapter. 방을 만든 사람의 정보 보여주기]
   addMessagesListeners = (chatRoomId) => {
     //메세지를 하나하나 넣어주기 위해 []
     let messagesArray = [];
@@ -44,8 +46,32 @@ class MainPanel extends Component {
         messages: messagesArray,
         messagesLoading: false,
       });
-      // this.userPostsCount(messagesArray);
+      //1.[chapter. 방을 만든 사람의 정보 보여주기]
+      this.userPostsCount(messagesArray);
     });
+  };
+
+  //2.[chapter. 방을 만든 사람의 정보 보여주기]
+  //유저가 작성한 메세지의 갯수를 세는 로직
+  //userPosts라는 테이블을 만드는데 필요한 데이터 객체를 만드는 곳
+  userPostsCount = (messages) => {
+    let userPosts = messages.reduce((acc, message) => {
+      if (message.user.name in acc) {
+        //name이 있을 경우엔 count만 늘려준다.
+        acc[message.user.name].count += 1;
+      } else {
+        //해당 값이 없을 경우에
+        acc[message.user.name] = {
+          image: message.user.image,
+          //해당 내용이 없기때문에, 해당 내용이 검색이 안되서 1로 설정
+          //이것부터 시작한다는 의미
+          count: 1,
+        };
+      }
+      return acc;
+    }, {});
+    this.props.dispatch(setUserPosts(userPosts));
+    // 이후에 MessageHeader.jsx의 renderUserPosts로 로직이 이동한다.
   };
 
   componentDidMount() {

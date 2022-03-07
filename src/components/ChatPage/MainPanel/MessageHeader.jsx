@@ -30,7 +30,8 @@ function MessageHeader({ handleSearchChange }) {
   const usersRef = ref(getDatabase(), 'users');
   //현재 로그인한 유저, 유저정보
   const user = useSelector((state) => state.user.currentUser);
-  // const userPosts = useSelector((state) => state.chatRoom.userPosts);
+  const userPosts = useSelector((state) => state.chatRoom.userPosts);
+
   useEffect(() => {
     if (chatRoom && user) {
       //브라우저를 리프레쉬해도 좋아요 한 것을 계속 유지하려고 useEffect를 하는데,
@@ -80,6 +81,28 @@ function MessageHeader({ handleSearchChange }) {
       });
     }
   };
+
+  //MainPanel의 userPostsCount에 다음 로직이 전달되는 함수
+  //count가 큰거부터 위에서 아래로 나오도록 설정한다.
+  const renderUserPosts = (userPosts) =>
+    Object.entries(userPosts)
+      .sort((a, b) => b[1].count - a[1].count)
+      .map(([key, val], i) => (
+        <div key={i} style={{ display: 'flex' }}>
+          <img
+            style={{ borderRadius: 25 }}
+            width={48}
+            height={48}
+            className="mr-3"
+            src={val.image}
+            alt={val.name}
+          />
+          <div>
+            <h6>{key}</h6>
+            <p>{val.count} 개</p>
+          </div>
+        </div>
+      ));
 
   return (
     <div
@@ -132,42 +155,44 @@ function MessageHeader({ handleSearchChange }) {
             </InputGroup>
           </Col>
         </Row>
+
         <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
           <p>
             <Image
-            // src={chatRoom && chatRoom.createdBy.image}
-            // roundedCircle
-            // style={{ width: '30px', height: '30px' }}
+              src={chatRoom && chatRoom.createdBy.image}
+              roundedCircle
+              style={{ width: '30px', height: '30px' }}
             />{' '}
-            {/* {chatRoom && chatRoom.createdBy.name} */}
+            {chatRoom && chatRoom.createdBy.name}
           </p>
         </div>
+
         <Row>
           <Col>
-            {/* <Accordion>
+            <Accordion>
               <Card>
-                <Card.Header></Card.Header>
+                <Card.Header style={{ padding: '0 1rem' }}>
+                  <Accordion>Description</Accordion>
+                </Card.Header>
                 <Accordion.Collapse>
-                  <Card.Body></Card.Body>
+                  <Card.Body>{chatRoom && chatRoom.description}</Card.Body>
                 </Accordion.Collapse>
               </Card>
-              <Card>
-                <Card.Header></Card.Header>
-                <Accordion.Collapse>
-                  <Card.Body></Card.Body>
-                </Accordion.Collapse>
-              </Card>
-            </Accordion> */}
+            </Accordion>
           </Col>
           <Col>
-            {/* <Accordion>
+            <Accordion>
               <Card>
-                <Card.Header></Card.Header>
+                <Card.Header style={{ padding: '0 1rem' }}>
+                  <Accordion>Posts Count</Accordion>
+                </Card.Header>
                 <Accordion.Collapse>
-                  <Card.Body></Card.Body>
+                  <Card.Body>
+                    {userPosts && renderUserPosts(userPosts)}
+                  </Card.Body>
                 </Accordion.Collapse>
               </Card>
-            </Accordion> */}
+            </Accordion>
           </Col>
         </Row>
       </Container>
