@@ -31,6 +31,8 @@ class MainPanel extends Component {
     listenerLists: [],
   };
 
+  messageEndRef = React.createRef();
+
   componentDidMount() {
     //리덕스로 가져온 chatRoom
     const { chatRoom } = this.props;
@@ -40,6 +42,13 @@ class MainPanel extends Component {
       this.addMessagesListeners(chatRoom.id);
       //섹션, typing 정보부분
       this.addTypingListeners(chatRoom.id);
+    }
+  }
+
+  //메세지를 입력할때 마다 , 참조하는 div로 스크롤이 이동한다.
+  componentDidUpdate() {
+    if (this.messageEndRef) {
+      this.messageEndRef.scrollIntoView({ behavior: 'smooth' });
     }
   }
 
@@ -267,6 +276,7 @@ class MainPanel extends Component {
             typingUsers.map((user) => (
               <span>{user.name.userUid}님이 채팅을 입력하고 있습니다...</span>
             ))}
+          <div ref={(node) => (this.messageEndRef = node)} />
         </div>
         <MessageForm />
       </div>
