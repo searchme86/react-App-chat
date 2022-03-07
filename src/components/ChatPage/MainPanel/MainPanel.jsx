@@ -14,14 +14,13 @@ import { connect } from 'react-redux';
 import MessageSearch from './MessageSearch';
 
 import { setUserPosts } from '../../../redux/reducers/chatRoom_reducer';
-// import Skeleton from '../../../commons/components/Skeleton';
+import Skeleton from '../../../commons/components/Skeleton';
 
 class MainPanel extends Component {
   state = {
     messages: [],
     //메세지 파이어베이스 테이블에 접근함
     messagesRef: ref(getDatabase(), 'messages'),
-    messagesLoading: true,
     searchTerm: '',
     searchResults: [],
     searchLoading: false,
@@ -29,6 +28,7 @@ class MainPanel extends Component {
     typingRef: ref(getDatabase(), 'typing'),
     typingUsers: [],
     listenerLists: [],
+    messagesLoading: true,
   };
 
   messageEndRef = React.createRef();
@@ -230,7 +230,7 @@ class MainPanel extends Component {
       searchTerm,
       searchResults,
       typingUsers,
-      // messagesLoading,
+      messagesLoading,
     } = this.state;
 
     return (
@@ -246,6 +246,14 @@ class MainPanel extends Component {
             overflow: 'auto',
           }}
         >
+          {messagesLoading && (
+            <>
+              {[...Array(10)].map((v, i) => (
+                <Skeleton key={i} />
+              ))}
+            </>
+          )}
+
           {searchTerm
             ? searchResults.length > 0 &&
               searchResults.map((result) => {
