@@ -21,6 +21,8 @@ function MessageForm() {
   const [percentage, setPercentage] = useState(0);
   //메세지 테이블 정의
   const messagesRef = ref(getDatabase(), 'messages');
+  //타이핑 테이블 정의
+  const typingRef = ref(getDatabase(), 'typing');
 
   //리덕스의 정보를 가져옴
   const chatRoom = useSelector((state) => state.chatRoom.currentChatRoom);
@@ -64,6 +66,11 @@ function MessageForm() {
       await set(push(child(messagesRef, chatRoom.id)), createMessage());
       //   await remove(child(typingRef, `${chatRoom.id}/${user.uid}`));
       //메세지를 모두 보낸 후에 초기화를 한다
+      //------------[typing 섹션]----------------------
+      //채팅을 submit 하면 tying 정보를 typing 테이블(db)에서 지우는 작업
+      await remove(child(typingRef, `${chatRoom.id}/${user.uid}`));
+      //MainPanel.jsx로 이동함 componentDidMount() {
+      //------------[typing 섹션]----------------------
       setLoading(false);
       setContent('');
       setErrors([]);
@@ -182,12 +189,31 @@ function MessageForm() {
     }
   };
 
+  const handleKeyDown = (event) => {
+    if (event.ctrlKey && event.keyCode === 13) {
+      handleSubmit();
+    }
+
+    let userUid = user.uid;
+    console.log('3/7 userUid가 나오나', user.uid);
+    console.log('3/7 chatRoom.id가 나오나', chatRoom.id);
+    //작성하는 메세지,content가 있을 때, 없을때.
+    if (content) {
+      // 어떤 chartoom의 유저 누가 작성하는지를 테이블에 저장한다
+      set(ref(getDatabase(), `typing/${chatRoom.id}/${user.uid}`), {
+        userUid: user.displayName,
+      });
+    } else {
+      remove(ref(getDatabase(), `typing/${chatRoom.id}/${user.uid}`));
+    }
+  };
+
   return (
     <div>
       <Form onSubmit={handleSubmit}>
         <Form.Group controlId="exampleForm.ControlTextarea1">
           <Form.Control
-            // onKeyDown={handleKeyDown}
+            onKeyDown={handleKeyDown}
             value={content}
             onChange={handleChange}
             as="textarea"

@@ -25,10 +25,31 @@ class MainPanel extends Component {
     searchTerm: '',
     searchResults: [],
     searchLoading: false,
+    //typing 테이블을 가져옴
     typingRef: ref(getDatabase(), 'typing'),
     typingUsers: [],
     listenerLists: [],
   };
+
+  componentDidMount() {
+    //리덕스로 가져온 chatRoom
+    const { chatRoom } = this.props;
+    if (chatRoom) {
+      //메세지를 실시간으로 가져오기
+      //해당 방에 해당하는 것이기에 chatRoom.id를 넣는다.
+      this.addMessagesListeners(chatRoom.id);
+      //섹션, typing 정보부분
+      this.addTypingListeners(chatRoom.id);
+    }
+  }
+
+  componentWillUnmount() {
+    //addMessageListeners의 'child_add' 이벤트의 내용을 해제하는 곳
+    //onChildAdded(child(messagesRef, chatRoomId), (DataSnapshot) 이거 내용을 해제하는 곳
+    off(this.state.messagesRef);
+
+    this.removeListeners(this.state.listenerLists);
+  }
 
   //메세지를 실시간으로 가져오기
   //파이어베이스는 데이터가 add되면 이벤트 리스너가 실행되는 것으로 알림
@@ -74,17 +95,6 @@ class MainPanel extends Component {
     // 이후에 MessageHeader.jsx의 renderUserPosts로 로직이 이동한다.
   };
 
-  componentDidMount() {
-    //리덕스로 가져온 chatRoom
-    const { chatRoom } = this.props;
-    if (chatRoom) {
-      //메세지를 실시간으로 가져오기
-      //해당 방에 해당하는 것이기에 chatRoom.id를 넣는다.
-      this.addMessagesListeners(chatRoom.id);
-      // this.addTypingListeners(chatRoom.id);
-    }
-  }
-
   //메세지를 입력해 검색하는 함수
   //인풋에 입력한 텍스트와 비슷한 메세지를 찾는 로직
   handleSearchMessages = () => {
@@ -117,12 +127,100 @@ class MainPanel extends Component {
     );
   };
 
+  //[typing 관련 함수]
+  addToListenerLists = (id, ref, event) => {
+    //이벤트에 해당하는 리스너가 이미 등록된 리스너인지 확인
+    const index = this.state.listenerLists.findIndex((listener) => {
+      return (
+        listener.id === id && listener.ref === ref && listener.event === event
+      );
+    });
+    //해당 리스너가 없다면, 새로 등록된 리스너만
+    if (index === -1) {
+      const newListener = { id, ref, event };
+      this.setState({
+        listenerLists: this.state.listenerLists.concat(newListener),
+      });
+    }
+  };
+
+  //[typing 관련 함수]
+  removeListeners = (listeners) => {
+    listeners.forEach((listner) => {
+      //listner.event는 child_added 부분이
+      //listner.id는 방 id
+      off(ref(getDatabase(), `messages/${listner.id}`), listner.event);
+    });
+  };
+
+  //[섹션: typing]
+  //폼에 텍스트가 입력될때 실행되는 리스너
+  addTypingListeners = (chatRoomId) => {
+    let typingUsers = [];
+    //typing이 새로 들어올 때
+    let { typingRef } = this.state;
+
+    onChildAdded(child(typingRef, chatRoomId), (DataSnapshot) => {
+      //DataSnapshot 현재 타이핑중인 유저의 정보인데,
+      //this.props.user.uid 현재 로그인한 유저임,
+      //현재 유저가 아닌, 다른 유저의 정보가 저장되어야 해서 !==한다.
+      //그래서 key가 다른 경우만 저장한다.
+      if (DataSnapshot.key !== this.props.user.uid) {
+        typingUsers = typingUsers.concat({
+          //user의 uid가 저장됨
+          id: DataSnapshot.key,
+          //타이핑하고 있는 사람의 이름
+          name: DataSnapshot.val(),
+        });
+        console.log('3/7추가되는typingUsers ', typingUsers);
+        this.setState({ typingUsers });
+      }
+    });
+
+    //onChildAdded 하고서 addToListenerLists에 넣어준다.
+    //listenersList state에 onChildAdded에 해당하는 리스너를 넣어주기
+    this.addToListenerLists(chatRoomId, this.state.typingRef, 'child_added');
+
+    //내가 타이핑을 작성하고 있는데, 그 타이핑을 지울 때,
+    //typing 데이터베이스에서도 지워야 함 지워줄 때
+    //타이핑 정보가 타이핑 데이터베이스에 지우면 리덕스 스토어에서도 지워도록 적용함
+    //onChildRemoved child, child가 지워질때
+    //타이핑 정보가 데이터베이스에서 제거되면 state에서도 지워주기
+    onChildRemoved(child(typingRef, chatRoomId), (DataSnapshot) => {
+      const index = typingUsers.findIndex(
+        // state typingUsers 안에 있는 유저가 폼에 글을 쓰는 유저( DataSnapshot.key)인지를 확인
+        (user) => user.id === DataSnapshot.key
+      );
+      if (index !== -1) {
+        //만약 폼을 작성하는 유저가 state typingUsers에 있었다면,
+        //그 유저를 상태에서 제거해야한다.
+        //DataSnapshot.key : 현재 폼에 텍스트를 입력하는 유저
+        console.log('3/7 filter 전 ', DataSnapshot.key);
+
+        typingUsers = typingUsers.filter(
+          //DataSnapshot.key를 지워야 함
+          //filter는 콜백에 해당되는 내용의 결과를 리턴한다
+          //지우기 위해서 filter을 한다.
+          //a를 뺀다라는 것은 a가 아닌 것만 보여준다/반환한다(return)라는 의미
+          //즉 DataSnapshot.key를 뺀다라는 건, !DataSnapshot.key인것을 반환하는 의미
+          //!DataSnapshot.key를 return 함으로, DataSnapshot.key는 빠지는 효과를 갖게됨
+          (user) => user.id !== DataSnapshot.key
+        );
+        console.log('3/7 filter 후 ', typingUsers);
+        this.setState({ typingUsers });
+      }
+    });
+
+    //onChildRemoved이벤트에 해당하는 리스너를 listenersList state에 넣어주기
+    this.addToListenerLists(chatRoomId, this.state.typingRef, 'child_removed');
+  };
+
   render() {
     const {
       messages,
       searchTerm,
       searchResults,
-      // typingUsers,
+      typingUsers,
       // messagesLoading,
     } = this.state;
 
@@ -164,6 +262,11 @@ class MainPanel extends Component {
                   </ul>
                 );
               })}
+
+          {typingUsers.length > 0 &&
+            typingUsers.map((user) => (
+              <span>{user.name.userUid}님이 채팅을 입력하고 있습니다...</span>
+            ))}
         </div>
         <MessageForm />
       </div>
