@@ -128,7 +128,7 @@
 
 #### [이전코드]
 
-``` javascript
+```javascript
 
 <!------------ 여기부터 ------------>
 renderMessages = (messages) =>
@@ -285,7 +285,7 @@ renderMessageSkeleton = (loading) =>
 #### Require default cases in switch statements
 
 #### [이전코드]
-````javascript
+```javascript
  (snapshot) => {
   // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
      const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
@@ -316,17 +316,47 @@ renderMessageSkeleton = (loading) =>
              break;
        }
     },
-  
 ```
 
-
-
-
-````javascript
+### [개선코드]
+```javasript
+    (snapshot) => {
+        const progress =
+           (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        setPercentage(Math.round(progress));
+        // console.log('percentage', percentage);
+        console.log('Upload is ' + progress + '% done');
+        switch (snapshot.state) {
+            case 'paused':
+              console.log('Upload is paused');
+              break;
+            case 'running':
+              console.log('Upload is running');
+              break;
+            <!------------ 새롭게 추가 ------------>
+            default:
+              console.log('Upload is not working');
+             <!------------ 새롭게 추가 ------------>  
+              
+   }
+ },
+ 
+     (error) => {
+          switch (error.code) {
+            case 'storage/unauthorized':
+              // User doesn't have permission to access the object
+              break;
+            case 'storage/canceled':
+              // User canceled the upload
+              break;
+            case 'storage/unknown':
+              break;
+            <!------------ 새롭게 추가 ------------>
+            default:
+              // eslint-disable-next-line no-unused-expressions
+              'storage/retry-limit-exceeded';
+             <!------------ 새롭게 추가 ------------>
+          }
+  },
 
 ```
-
-
-
-
-
