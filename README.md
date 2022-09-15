@@ -48,10 +48,14 @@
 
 + 개선 완료한 목록
   + 🔨개선 1. jsx에서 (함수가 처리완료된) 값을 바로(선언적으로) return 하지 않고, "다시" 함수를 호출해 그 값을 return 하는 경우
-    + 삼항연산자, 함수의 반환내용을 return 안으로 이동하여 코드 개선   
+    + 삼항연산자, 함수의 반환내용을 return 안으로 이동하여 코드 개선  
+      + components > MainPanel > MainPanel.jsx
+      + components > SidePanel > ChatRoom.jsx
+      
   + 🔨개선 2. Switch 구문에는 모든 조건이 실패될 경우, 마지막에 'default'코드 를 입력한다.
     + 코드 default 추가 
     + 주석, // eslint-disable-next-line no-unused-expressions 입력해 eslint 경고제거 
+      + components > MainPanel > MessageForm.jsx
 
 
 #### 🔨개선 1. jsx에서 (함수가 처리완료된) 값을 바로(선언적으로) return 하지 않고, "다시" 함수를 호출해 그 값을 return 하는 경우
