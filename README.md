@@ -52,8 +52,8 @@
   + 2. jsx의 가독성과 코드 흐름을 간편하게 이해하고 싶었음
 
 + 개선내용
-  + 이전 
-    + jsx에서 함수를 호출하고(함수코드가 정의된 곳으로 엔진이 이동) 호출 값을 jsx에서 보여주기
+  ### 이전 
+  ### jsx에서 함수를 호출하고(함수코드가 정의된 곳으로 엔진이 이동) 호출 값을 jsx에서 보여주기
 
 ``` javascript
 {this.renderMessageSkeleton(messagesLoading)}
@@ -68,8 +68,8 @@
 ``` javascript
 {this.renderTypingUsers(typingUsers)}
 ```        
-   + 이후
-    + jsx에서 삼항연산자를 통해, 함수의 인자값으로 값이 들어오면/들어오지 않으면, 함수의 결괏값이 반환되도록 코드 변경   
+  ### 이후
+  ### jsx에서 삼항연산자를 통해, 함수의 인자값으로 값이 들어오면/들어오지 않으면, 함수의 결괏값이 반환되도록 코드 변경   
 
 ```javascript
 {messagesLoading && (
@@ -111,9 +111,10 @@
 ```
 
 ```javascript
-
-
-
+{typingUsers.length > 0 &&
+  typingUsers.map((user) => (
+    <span>{user.name.userUid}님이 채팅을 입력하고 있습니다...</span>
+))}
 ```
 
 #### [이전코드]
