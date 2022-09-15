@@ -189,7 +189,9 @@ renderMessageSkeleton = (loading) =>
 #### [개선코드]
 
 ```javascript
-
+<!------------ 여기부터  ------------>
+-함수정의된 곳-
+<!------------ 여기까지 정의된 함수가 삭제됐습니다. ------------>
  render() {
     const {
       messages,
@@ -212,6 +214,7 @@ renderMessageSkeleton = (loading) =>
             overflow: 'auto',
           }}
         >
+        <!------------ 기존 함수가 여기부터 ------------>
           {messagesLoading && (
             <>
               {[...Array(10)].map((v, i) => (
@@ -250,6 +253,7 @@ renderMessageSkeleton = (loading) =>
             typingUsers.map((user) => (
               <span>{user.name.userUid}님이 채팅을 입력하고 있습니다...</span>
             ))}
+            <!------------ 여기까지 영역으로 이동됐습니다.  ------------>
           <div ref={(node) => (this.messageEndRef = node)} />
         </div>
         <MessageForm />
