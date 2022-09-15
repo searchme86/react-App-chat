@@ -120,7 +120,7 @@
 
 ``` javascript
 
-<!------------ 개선영역 여기까지 ------------>
+<!------------ 여기부터 변경됩니다. ------------>
 renderMessages = (messages) =>
     messages.length > 0 &&
     messages.map((message) => (
@@ -149,7 +149,7 @@ renderMessageSkeleton = (loading) =>
       </>
     );
     
- <!------------ 개선영역 여기까지 ------------>
+ <!------------ 여기까지 변경됩니다. ------------>
 
   render() {
     const {
@@ -167,7 +167,7 @@ renderMessageSkeleton = (loading) =>
         -중략-
         >
         
-        <!------------ 개선영역 여기부터 ------------>
+        <!------------ 여기부터 변경됩니다. ------------>
           {this.renderMessageSkeleton(messagesLoading)}
 
           {searchTerm
@@ -176,7 +176,7 @@ renderMessageSkeleton = (loading) =>
 
           {this.renderTypingUsers(typingUsers)}
           
-        <!------------ 개선영역 여기 ------------>
+        <!------------ 여기 변경됩니다. ------------>
         
         </div>
 
@@ -186,6 +186,78 @@ renderMessageSkeleton = (loading) =>
   }
 ```
 
+#### [개선코드]
 
+```javascript
+
+ render() {
+    const {
+      messages,
+      searchTerm,
+      searchResults,
+      typingUsers,
+      messagesLoading,
+    } = this.state;
+
+    return (
+      <div style={{ padding: '2rem 2rem 0 2rem' }}>
+        <MessageHeader handleSearchChange={this.handleSearchChange} />
+        <div
+          style={{
+            width: '100%',
+            height: '450px',
+            border: '.2rem solie #ececec',
+            padding: '1rem',
+            marginBottom: '1rem',
+            overflow: 'auto',
+          }}
+        >
+          {messagesLoading && (
+            <>
+              {[...Array(10)].map((v, i) => (
+                <Skeleton key={i} />
+              ))}
+            </>
+          )}
+
+          {searchTerm
+            ? searchResults.length > 0 &&
+              searchResults.map((result) => {
+                return (
+                  <ul>
+                    <MessageSearch
+                      key={this.props.user.id}
+                      message={result}
+                      user={this.props.user}
+                    />
+                  </ul>
+                );
+              })
+            : messages.length > 0 &&
+              messages.map((message) => {
+                return (
+                  <ul style={{ paddingLeft: '-30px' }} key={this.props.user.id}>
+                    <Message
+                      key={this.props.user.id}
+                      message={message}
+                      user={this.props.user}
+                    />
+                  </ul>
+                );
+              })}
+
+          {typingUsers.length > 0 &&
+            typingUsers.map((user) => (
+              <span>{user.name.userUid}님이 채팅을 입력하고 있습니다...</span>
+            ))}
+          <div ref={(node) => (this.messageEndRef = node)} />
+        </div>
+        <MessageForm />
+      </div>
+    );
+  }
+
+
+```
 
 
