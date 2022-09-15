@@ -278,13 +278,50 @@ renderMessageSkeleton = (loading) =>
 
 ### 상황
 #### 애플리케이션의 기능 중, "파일의 업로드 비율(%) 프로그래스바'는 파이어베이스 v8 버전의 코드입니다.
-#### v9로 버전이 변경 되면서, v9버전의 설정 코드를 제공 받았는데, 이를 프로젝트에 적용하면서 eslint 경고를 경험했습니다.
-
+#### v9로 버전이 변경 되면서, v9버전의 설정 코드를 제공 받았는데, 이를 프로젝트에 ***그대로*** 적용해 eslint 경고를 경험했습니다.
+#### 파이어베이스 공식 문서(https://firebase.google.com/docs/storage/web/upload-files?hl=ko#web-version-9_6) 중, v9버전의 코드는 default 키워드가 없습니다.('error-code'부분)
 
 ### defalt-case ( https://eslint.org/docs/latest/rules/default-case )
 #### Require default cases in switch statements
 
+#### [이전코드]
+````javascript
+ (snapshot) => {
+  // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+     const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+     console.log('Upload is ' + progress + '% done');
+     switch (snapshot.state) {
+         case 'paused':
+               console.log('Upload is paused');
+               break;
+         case 'running':
+               console.log('Upload is running');
+               break;
+      }
+   },
+   
+   (error) => {
+   // A full list of error codes is available at
+   // https://firebase.google.com/docs/storage/web/handle-errors
+      switch (error.code) {
+          case 'storage/unauthorized':
+             // User doesn't have permission to access the object
+             break;
+          case 'storage/canceled':
+             // User canceled the upload
+             break;
+             // ...
+          case 'storage/unknown':
+             // Unknown error occurred, inspect error.serverResponse
+             break;
+       }
+    },
+```
 
+#### [개선코드]
+````javascript
+
+```
 
 
 
