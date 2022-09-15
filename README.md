@@ -120,7 +120,7 @@
 
 ``` javascript
 
-<!------------ 여기부터 변경됩니다. ------------>
+<!------------ 여기부터 ------------>
 renderMessages = (messages) =>
     messages.length > 0 &&
     messages.map((message) => (
@@ -167,7 +167,7 @@ renderMessageSkeleton = (loading) =>
         -중략-
         >
         
-        <!------------ 여기부터 변경됩니다. ------------>
+        <!------------ 여기부터 ------------>
           {this.renderMessageSkeleton(messagesLoading)}
 
           {searchTerm
@@ -176,7 +176,7 @@ renderMessageSkeleton = (loading) =>
 
           {this.renderTypingUsers(typingUsers)}
           
-        <!------------ 여기 변경됩니다. ------------>
+        <!------------ 여기까지 변경됩니다. ------------>
         
         </div>
 
