@@ -52,8 +52,8 @@
   + 2. jsx의 가독성과 코드 흐름을 간편하게 이해하고 싶었음
 
 + 개선내용
-  ### 이전 
-  ### jsx에서 함수를 호출하고(함수코드가 정의된 곳으로 엔진이 이동) 호출 값을 jsx에서 보여주기
+  + 이전 
+    + jsx에서 함수를 호출하고(함수코드가 정의된 곳으로 엔진이 이동) 호출 값을 jsx에서 보여주기
 
 ``` javascript
 {this.renderMessageSkeleton(messagesLoading)}
