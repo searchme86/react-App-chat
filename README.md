@@ -316,9 +316,12 @@ renderMessageSkeleton = (loading) =>
              break;
        }
     },
+  
 ```
 
-#### [개선코드]
+
+
+
 ````javascript
 
 ```
