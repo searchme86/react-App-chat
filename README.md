@@ -54,7 +54,71 @@
 #### [이전코드]
 
 ``` javascript
-console.log('test')
+
+<!-- 개선영역 여기부터 -->
+renderMessages = (messages) =>
+    messages.length > 0 &&
+    messages.map((message) => (
+      <Message
+        key={message.timestamp}
+        message={message}
+        user={this.props.user}
+      />
+    ));
+
+  renderTypingUsers = (typingUsers) => {
+    return (
+      typingUsers.length > 0 &&
+      typingUsers.map((user) => (
+        <span>{user.name.userUid}님이 채팅을 입력하고 있습니다...</span>
+      ))
+    );
+  };
+  
+renderMessageSkeleton = (loading) =>
+    loading && (
+      <>
+        {[...Array(10)].map((v, i) => (
+          <Skeleton key={i} />
+        ))}
+      </>
+    );
+    
+ <!-- 개선영역 여기까지 -->
+
+  render() {
+    const {
+      messages,
+      searchTerm,
+      searchResults,
+      typingUsers,
+      messagesLoading,
+    } = this.state;
+    return (
+      <div style={{ padding: '2rem 2rem 0 2rem' }}>
+        <MessageHeader handleSearchChange={this.handleSearchChange} />
+
+        <div
+        -중략-
+        >
+        
+        <!-- 개선영역 여기부터 -->
+          {this.renderMessageSkeleton(messagesLoading)}
+
+          {searchTerm
+            ? this.renderMessages(searchResults)
+            : this.renderMessages(messages)}
+
+          {this.renderTypingUsers(typingUsers)}
+          
+        <!-- 개선영역 여기부터 -->
+        
+        </div>
+
+        <MessageForm />
+      </div>
+    );
+  }
 ```
 
 
