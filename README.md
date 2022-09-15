@@ -55,7 +55,7 @@
 
 ``` javascript
 
-<!-- 개선영역 여기부터 -->
+<!------------ 개선영역 여기까지 ------------>
 renderMessages = (messages) =>
     messages.length > 0 &&
     messages.map((message) => (
@@ -84,7 +84,7 @@ renderMessageSkeleton = (loading) =>
       </>
     );
     
- <!-- 개선영역 여기까지 -->
+ <!------------ 개선영역 여기까지 ------------>
 
   render() {
     const {
@@ -102,7 +102,7 @@ renderMessageSkeleton = (loading) =>
         -중략-
         >
         
-        <!-- 개선영역 여기부터 -->
+        <!------------ 개선영역 여기부터 ------------>
           {this.renderMessageSkeleton(messagesLoading)}
 
           {searchTerm
@@ -111,7 +111,7 @@ renderMessageSkeleton = (loading) =>
 
           {this.renderTypingUsers(typingUsers)}
           
-        <!-- 개선영역 여기부터 -->
+        <!------------ 개선영역 여기 ------------>
         
         </div>
 
