@@ -71,6 +71,51 @@
    + 이후
     + jsx에서 삼항연산자를 통해, 함수의 인자값으로 값이 들어오면/들어오지 않으면, 함수의 결괏값이 반환되도록 코드 변경   
 
+```javascript
+{messagesLoading && (
+  <>
+      {[...Array(10)].map((v, i) => (
+        <Skeleton key={i} />
+      ))}
+  </>
+)}
+```
+
+```javascript
+{searchTerm
+  ? searchResults.length > 0 &&
+      searchResults.map((result) => {
+         return (
+             <ul>
+                <MessageSearch
+                   key={this.props.user.id}
+                   message={result}
+                   user={this.props.user}
+                />
+             </ul>
+                );
+              })
+  : messages.length > 0 &&
+       messages.map((message) => {
+          return (
+             <ul style={{ paddingLeft: '-30px' }} key={this.props.user.id}>
+                 <Message
+                    key={this.props.user.id}
+                    message={message}
+                    user={this.props.user}
+                 />
+             </ul>
+                );
+  })}
+
+```
+
+```javascript
+
+
+
+```
+
 #### [이전코드]
 
 ``` javascript
