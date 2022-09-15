@@ -287,6 +287,8 @@ renderMessageSkeleton = (loading) =>
 #### v9로 버전이 변경 되면서, v9버전의 설정 코드를 제공 받았는데, 이를 프로젝트에 ***그대로*** 적용해 eslint 경고를 경험했습니다.
 #### 파이어베이스 공식 문서(https://firebase.google.com/docs/storage/web/upload-files?hl=ko#web-version-9_6) 중, v9버전의 코드는 default 키워드가 없습니다.('error-code'부분)
 
+<img width="845" alt="스크린샷 2022-09-15 오후 10 51 12" src="https://user-images.githubusercontent.com/47154709/190433287-e8bb87fd-c55d-415c-aa55-7b09cd164427.png">
+
 ### defalt-case ( https://eslint.org/docs/latest/rules/default-case )
 #### Require default cases in switch statements
 
