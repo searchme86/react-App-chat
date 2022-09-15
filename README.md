@@ -68,8 +68,8 @@
 ``` javascript
 {this.renderTypingUsers(typingUsers)}
 ```        
-  ### 이후
-  ### jsx에서 삼항연산자를 통해, 함수의 인자값으로 값이 들어오면/들어오지 않으면, 함수의 결괏값이 반환되도록 코드 변경   
++ 이후
+  + jsx에서 삼항연산자를 통해, 함수의 인자값으로 값이 들어오면/들어오지 않으면, 함수의 결괏값이 반환되도록 코드 변경   
 
 ```javascript
 {messagesLoading && (
